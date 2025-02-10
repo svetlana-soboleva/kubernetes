@@ -1,62 +1,67 @@
+name: Build and Deploy to Kubernetes
+
 on:
-    push:
-      branches:
-        - main  
-  
+  push:
+    branches:
+      - main  
+
 jobs:
-    build-and-deploy:
-      runs-on: ubuntu-latest
-  
-      steps:
-       
-        - name: Checkout repository
-          uses: actions/checkout@v2
-  
-        # Step 1: Set up Docker Buildx
-        - name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v1
-  
-        # Step 2: Login to Docker Hub
-        - name: Login to Docker Hub
-          uses: docker/login-action@v2
-          with:
-            username: ${{ secrets.DOCKER_USERNAME }}
-            password: ${{ secrets.DOCKER_PASSWORD }}
-  
-        # Step 3: Build and push the Docker image
-        - name: Build and push Docker image
-          run: |
-            cd backend
-            docker build -t ssobol/notes-backend:latest .
-            docker push ssobol/notes-backend:latest
-  
-        # Step 4: Install the GKE GCloud Auth Plugin
-        - name: Install GKE GCloud Auth Plugin
-          run: |
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+     
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
+# Step 1: Build Java project with Maven
+      - name: Build Java project with Maven
+        run: |
+          cd backend
+          mvn clean install -DskipTests
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Step 4: Build and push the Docker image
+      - name: Build and push Docker image
+        run: |
+          cd backend
+          docker build -t ssobol/notes-backend:latest .
+          docker push ssobol/notes-backend:latest
+      # Step 4: Install the GKE GCloud Auth Plugin
+      - name: Install GKE GCloud Auth Plugin
+        run: |
             curl -sSL https://sdk.cloud.google.com | bash
             source $HOME/google-cloud-sdk/path.bash.inc
             gcloud components install gke-gcloud-auth-plugin
-  
-        # Step 5: Authenticate to Google Cloud (for GKE)
-        - name: Authenticate to Google Cloud
-          uses: google-github-actions/auth@v0
-          with:
-            credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-  
-        # Step 6: Set up kubectl for GKE
-        - name: Set up kubectl
-          run: |
-            gcloud container clusters get-credentials autopilot-cluster-1 --zone europe-north1 --project regal-marking-409018
-  
-        # Step 7: Apply Kubernetes Deployment and Service YAML files
-        - name: Apply Kubernetes Deployment and Service
-          run: |
-            kubectl apply -f backend/deployment.yaml
-            kubectl apply -f backend/service.yaml
-  
-        # Step 8: Deploy the new image (optional if you are updating an existing deployment)
-        - name: Update Deployment with new image
-          run: |
-            kubectl set image deployment/notes-backend-deployment notes-backend=ssobol/notes-backend:latest
-            kubectl rollout status deployment/notes-backend-deployment
-  
+            
+      # Step 5: Set up Google Cloud authentication for GKE (use if using GKE)
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      # Step 6: Configure kubectl for GKE (only if you're using GKE)
+      - name: Set up kubectl
+        run: |
+          gcloud container clusters get-credentials autopilot-cluster-1 --zone europe-north1 --project regal-marking-409018
+
+      # Step 7: Apply Kubernetes Deployment and Service YAML files
+      - name: Apply Kubernetes Deployment and Service
+        run: |
+          kubectl apply -f backend/deployment.yaml
+          kubectl apply -f backend/service.yaml
+
+      # Step 8: Deploy the new image (optional if you are updating an existing deployment)
+      - name: Update Deployment with new image
+        run: |
+          kubectl set image deployment/notes-backend-deployment notes-backend=ssobol/notes-backend:latest
+          kubectl rollout status deployment/notes-backend-deployment
