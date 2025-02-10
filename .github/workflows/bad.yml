@@ -36,12 +36,19 @@ jobs:
           cd backend
           docker build -t ssobol/notes-backend:latest .
           docker push ssobol/notes-backend:latest
+
       # Step 4: Install the GKE GCloud Auth Plugin
       - name: Install GKE GCloud Auth Plugin
         run: |
             curl -sSL https://sdk.cloud.google.com | bash
             source $HOME/google-cloud-sdk/path.bash.inc
             gcloud components install gke-gcloud-auth-plugin
+            gcloud components update
+            
+      - name: Configure kubectl to use GKE auth plugin
+        run: |
+            export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+            echo "USE_GKE_GCLOUD_AUTH_PLUGIN=True" >> $HOME/.bashrc
 
       # Step 5: Set up Google Cloud authentication for GKE (use if using GKE)
       - name: Authenticate to Google Cloud
