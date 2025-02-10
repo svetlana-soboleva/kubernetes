@@ -13,7 +13,11 @@ jobs:
      
       - name: Checkout repository
         uses: actions/checkout@v2
-
+# Step 1: Build Java project with Maven
+      - name: Build Java project with Maven
+        run: |
+          cd backend
+          mvn clean install
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
