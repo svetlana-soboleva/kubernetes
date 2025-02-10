@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: notes-backend
-          image: ssobol/notes-backend:1.2
+          image: ssobol/notes-backend:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
