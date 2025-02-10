@@ -1,0 +1,49 @@
+name: Build and Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+     
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Step 4: Build and push the Docker image
+      - name: Build and push Docker image
+        run: |
+          docker build -t ssobol/notes-backend:latest .
+          docker push ssobol/notes-backend:latest
+
+      # Step 5: Set up Google Cloud authentication for GKE (use if using GKE)
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      # Step 6: Configure kubectl for GKE (only if you're using GKE)
+      - name: Set up kubectl
+        run: |
+          gcloud container clusters get-credentials autopilot-cluster-1 --zone europe-north1 --project regal-marking-409018
+
+      # Step 7: Apply Kubernetes deployment (update image)
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl set image deployment/notes-backend-deployment notes-backend=ssobol/notes-backend:latest
+          kubectl rollout status deployment/notes-backend-deployment

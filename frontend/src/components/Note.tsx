@@ -1,7 +1,20 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
+import { getNotes } from '../api/api'
 
 export const 
 Note = () => {
+
+  const [notes, setNotes] = useState()
+
+  useEffect( () => {
+    const fetchData = async () => {
+      await getNotes();
+  
+      //setNotes(result);
+    };
+  
+    fetchData();
+  }, [notes])
   return (
     <div>
         <div>
