@@ -42,10 +42,10 @@ jobs:
             curl -sSL https://sdk.cloud.google.com | bash
             source $HOME/google-cloud-sdk/path.bash.inc
             gcloud components install gke-gcloud-auth-plugin
-            
+
       # Step 5: Set up Google Cloud authentication for GKE (use if using GKE)
       - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v0
+        uses: google-github-actions/auth@v0.4.0
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
