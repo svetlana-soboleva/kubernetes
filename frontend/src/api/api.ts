@@ -4,7 +4,7 @@ export const getNotes = async () => {
   return data;
 };
 
-export const postNote = async (body) => {
+export const postNote = async (body: { text: string }) => {
   try {
     const response = await fetch("http://35.228.137.250:8080/api/v1/notes", {
       method: "POST",
