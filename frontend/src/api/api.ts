@@ -10,7 +10,7 @@ export const getNotes = async () => {
 
 export const postNote = async (body: { text: string }) => {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(`${API_URL}/notes`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

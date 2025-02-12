@@ -25,13 +25,6 @@ public class Controller {
         this.service = service;
     }
 
-    @CrossOrigin(origins = "*")
-    @RequestMapping(value = "/api/v1/notes", method = RequestMethod.OPTIONS)
-    public ResponseEntity<Void> optionsRequest() {
-        return ResponseEntity.ok().build();
-    }
-
-
     @GetMapping("/notes")
     public ResponseEntity<List<ResponseNoteDto>> getString(){
         List<ResponseNoteDto> notes = service.getAllNotes();
