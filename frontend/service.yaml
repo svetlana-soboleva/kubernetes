@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: notes-frontend-service
+spec:
+  selector:
+    app: notes-frontend
+  ports:
+    - protocol: TCP
+      port: 80  # The port exposed on the service
+      targetPort: 80  # The port on the container
+  type: LoadBalancer  # Exposes the service to the outside world (cloud provider will assign an external IP)
