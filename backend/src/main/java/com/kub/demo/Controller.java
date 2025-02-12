@@ -13,7 +13,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1")
 public class Controller {
@@ -24,6 +24,13 @@ public class Controller {
     public Controller(@Autowired NoteService service) {
         this.service = service;
     }
+
+    @CrossOrigin(origins = "*")
+    @RequestMapping(value = "/api/v1/notes", method = RequestMethod.OPTIONS)
+    public ResponseEntity<Void> optionsRequest() {
+        return ResponseEntity.ok().build();
+    }
+
 
     @GetMapping("/notes")
     public ResponseEntity<List<ResponseNoteDto>> getString(){
