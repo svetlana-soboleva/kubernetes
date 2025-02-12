@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins= {"://localhost:5173", "http://localhost:4173", "http://localhost:8080", "http://35.228.137.250"})
 @RestController
 @RequestMapping("/api/v1")
 public class Controller {
