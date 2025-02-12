@@ -82,3 +82,9 @@ jobs:
         run: |
           kubectl set image deployment/notes-backend-deployment notes-backend=ssobol/notes-backend:latest
           kubectl rollout status deployment/notes-backend-deployment
+
+      # Step 9: Force rollout restart (to ensure fresh pods)
+      - name: Restart Deployment to Ensure Latest Image
+        run: |
+          kubectl rollout restart deployment/notes-backend-deployment
+          kubectl rollout status deployment/notes-backend-deployment
