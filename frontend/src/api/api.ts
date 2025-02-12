@@ -1,6 +1,8 @@
 //const URL = "http://localhost:8080/api/v1/notes"
 
-const API_URL = import.meta.env.VITE_API_URL;
+//const API_URL = import.meta.env.VITE_API_URL;
+
+const API_URL = "http://35.228.137.250:8080/api/v1"
 
 export const getNotes = async () => {
   const notes = await fetch(`${API_URL}/notes`);
