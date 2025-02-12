@@ -1,16 +1,17 @@
 
-//const URL = "http://localhost:8080/api/v1/notes"
-const URL_PR= "http://35.228.137.250:8080/api/v1/notes"
+const URL = "http://localhost:8080/api/v1/notes"
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const getNotes = async () => {
-  const notes = await fetch(URL_PR);
+  const notes = await fetch(URL);
   const data = await notes.json();
   return data;
 };
 
 export const postNote = async (body: { text: string }) => {
   try {
-    const response = await fetch(URL_PR, {
+    const response = await fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
