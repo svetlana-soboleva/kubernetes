@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: notes-frontend
-        image: ssobol/notes-frontend:latest 
+        image: ssobol/notes-frontend:${VERSION}  
         ports:
         - containerPort: 80
         resources:

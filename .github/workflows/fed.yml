@@ -25,12 +25,17 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      #  Get the commit ID dynamically
+      - name: Get the commit ID
+        id: commit
+        run: echo "VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       # Step 3: Build and push the Docker image
       - name: Build and push Docker image
         run: |
           cd frontend
-          docker build -t ssobol/notes-frontend:latest .
-          docker push ssobol/notes-frontend:latest
+          docker build -t ssobol/notes-frontend:$VERSION .
+          docker push ssobol/notes-frontend:$VERSION
 
       # Step 4: Install the GKE GCloud Auth Plugin
       - name: Install Google Cloud SDK and GKE Auth Plugin
@@ -58,6 +63,12 @@ jobs:
         run: |
           gcloud container clusters get-credentials autopilot-cluster-1 --zone europe-north1 --project regal-marking-409018
 
+
+      # Replace VERSION in the deployment file dynamically
+      - name: Replace VERSION in deployment.yaml
+        run: |
+          sed -i "s|\${VERSION}|$VERSION|g" frontend/deployment.yaml
+
       # Step 7: Apply Kubernetes Deployment and Service YAML files
       - name: Apply Kubernetes Deployment and Service
         run: |
@@ -67,7 +78,7 @@ jobs:
       # Step 8: Deploy the new image
       - name: Update Deployment with new image
         run: |
-          kubectl set image deployment/notes-frontend-deployment notes-frontend=ssobol/notes-frontend:latest
+          kubectl set image deployment/notes-frontend-deployment notes-frontend=ssobol/notes-frontend:$VERSION
           kubectl rollout status deployment/notes-frontend-deployment
 
       # Step 9: Force rollout restart (to ensure fresh pods)
