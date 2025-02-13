@@ -7,16 +7,15 @@ function App() {
   const [notes, setNotes] = useState<NoteType[]>([]);
   const [newNote, setNewNote] = useState("");
 
+  const fetchData = async () => {
+    try {
+      const result = await getNotes();
+      setNotes(result);
+    } catch (error) {
+      console.error("Error fetching notes:", error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getNotes();
-        setNotes(result);
-      } catch (error) {
-        console.error("Error fetching notes:", error);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -28,8 +27,7 @@ function App() {
     try {
       await postNote({ text: newNote });
       setNewNote("");
-      const updatedNotes = await getNotes();
-      setNotes(updatedNotes);
+      fetchData();
     } catch (error) {
       console.error("Error adding new note:", error);
     }
@@ -38,7 +36,7 @@ function App() {
   const handleDeleteNote = async (id: number) => {
     try {
       await deleteNoteById(id);
-      setNotes((prevNotes) => prevNotes.filter((note) => note.id != id));
+      fetchData();
     } catch (error) {
       console.error(`Error deleting the note: ${error}`);
     }
