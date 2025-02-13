@@ -35,9 +35,11 @@ function App() {
 
   const handleDeleteNote = async (id: number) => {
     try {
+      console.log(`Before delete ${notes}`)
       const response = await deleteNoteById(id);
       if (response.ok) {
         setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+        console.log(`After delete ${notes}`)
       }
     } catch (error) {
       console.error(`Error deleting the note: ${error}`);
