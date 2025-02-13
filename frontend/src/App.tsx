@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Note } from "./components/Note";
-import { getNotes, postNote } from "./api/api";
+import { Note, NoteType } from "./components/Note";
+import { deleteNoteById, getNotes, postNote } from "./api/api";
 import "./index.css";
 
 function App() {
-  const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState<NoteType[]>([]);
   const [newNote, setNewNote] = useState("");
 
   useEffect(() => {
@@ -35,6 +35,15 @@ function App() {
     }
   };
 
+  const handleDeleteNote = async (id: number) => {
+    try {
+      await deleteNoteById(id);
+      setNotes((prevNotes) => prevNotes.filter((note) => note.id != id));
+    } catch (error) {
+      console.error(`Error deleting the note: ${error}`);
+    }
+  };
+
   return (
     <div className="flex flex-col justify-center items-center gap-10 m-8">
       <h1>My notes</h1>
@@ -62,13 +71,12 @@ function App() {
         </button>
       </div>
       <div className="flex flex-wrap gap-4 justify-center">
-  {notes.length === 0 ? (
-    <p>Loading notes...</p>
-  ) : (
-    notes.map((note) => <Note note={note} />)
-  )}
-</div>
-
+        {notes.length === 0 ? (
+          <p>Loading notes...</p>
+        ) : (
+          notes.map((note) => <Note note={note} onDelete={handleDeleteNote} />)
+        )}
+      </div>
     </div>
   );
 }

@@ -1,19 +1,14 @@
-import { deleteNoteById } from "../api/api";
-
-interface Note {
+export interface NoteType {
   id: number;
   text: string;
   date: string;
 }
 
 interface NoteProps {
-  note: Note;
+  note: NoteType;
+  onDelete: (id: number) => void;
 }
-export const Note = ({ note }: NoteProps) => {
-  
-  const handleDeleteNote = async (id: number) => {
-    await deleteNoteById(id);
-  };
+export const Note = ({ note, onDelete }: NoteProps) => {
   return (
     <div>
       <div
@@ -23,7 +18,7 @@ export const Note = ({ note }: NoteProps) => {
         <div className="flex flex-row justify-between text-gray-800">
           <p className="text-gray-700 text-sm">{note.text}</p>
           <button
-            onClick={() => handleDeleteNote(note.id)}
+            onClick={() => onDelete(note.id)}
             className="w-8 h-8 cursor-pointer rounded-full bg-gray-700 text-white flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2  focus:ring-black"
             aria-label="edit note"
             role="button"
