@@ -23,4 +23,8 @@ public class NoteService {
     public Note saveNote(RequestNoteDto newNote){
         return repo.save(RequestNoteDto.toModel(newNote));
     }
+
+    public void deleteNoteById(Long id){
+        repo.deleteById(id);
+    }
 }

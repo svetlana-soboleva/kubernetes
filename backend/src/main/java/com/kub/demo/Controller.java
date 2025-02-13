@@ -13,7 +13,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/api/v1")
 public class Controller {
@@ -35,6 +34,13 @@ public class Controller {
     public ResponseEntity<ResponseNoteDto> createNote(@RequestBody RequestNoteDto body){
         Note savedNote = service.saveNote(body);
         return ResponseEntity.ok(ResponseNoteDto.fromModel(savedNote));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteNote(@RequestBody int id){
+        Long noteId = (long) id;
+        service.deleteNoteById(noteId);
+        return ResponseEntity.noContent().build();
     }
 
 }
