@@ -45,6 +45,7 @@ export const deleteNoteById = async (id: number) => {
       throw new Error(errorData.message || `Error: ${response.statusText}`);
     }
     console.log("Deleted");
+    return response
   } catch (error) {
     throw new Error(`Error deleting the story: ${error}`);
   }
