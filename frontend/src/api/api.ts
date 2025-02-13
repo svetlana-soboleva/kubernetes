@@ -1,21 +1,20 @@
-//const URL = "http://localhost:8080/api/v1/notes"
+//const URL_LOCAL = "http://localhost:8080/api/v1";
 
 //const API_URL = import.meta.env.VITE_API_URL;
 
-//const API_URL = "http://35.228.137.250:8080/api/v1";
+//const DEV_URL = "http://35.228.137.250:8080/api/v1";
 
-const API_URL = "/api";
+const API_URL_PROD = "/api";
 
 export const getNotes = async () => {
-  console.log("API_URL in frontend:", API_URL);
-  const notes = await fetch(`${API_URL}/notes`);
+  const notes = await fetch(`${API_URL_PROD}/notes`);
   const data = await notes.json();
   return data;
 };
 
 export const postNote = async (body: { text: string }) => {
   try {
-    const response = await fetch(`${API_URL}/notes`, {
+    const response = await fetch(`${API_URL_PROD}/notes`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,5 +28,24 @@ export const postNote = async (body: { text: string }) => {
     console.log(data);
   } catch (error) {
     console.log("Error while posting" + error);
+  }
+};
+
+export const deleteNoteById = async (id: number) => {
+  try {
+    const response = await fetch(`${API_URL_PROD}/delete`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(id),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `Error: ${response.statusText}`);
+    }
+    console.log("Deleted");
+  } catch (error) {
+    throw new Error(`Error deleting the story: ${error}`);
   }
 };
