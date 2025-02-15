@@ -27,4 +27,15 @@ public class NoteService {
     public void deleteNoteById(Long id){
         repo.deleteById(id);
     }
+
+    public Note updateNote(ResponseNoteDto updatedNote) {
+        return repo.findById(updatedNote.id())
+                .map(note -> {
+                    note.setTitle(updatedNote.title());
+                    note.setText(updatedNote.text());
+                    note.setColor(updatedNote.color());
+                    return repo.save(note);
+                })
+                .orElseThrow(() -> new RuntimeException("Note not found!"));
+    }
 }

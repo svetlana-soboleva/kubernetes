@@ -1,7 +1,12 @@
+import { useEffect, useRef, useState } from "react";
+import { updateNote } from "../api/api";
+
 export interface NoteType {
   id: number;
+  title: string;
   text: string;
   date: string;
+  color: string;
 }
 
 interface NoteProps {
@@ -9,14 +14,38 @@ interface NoteProps {
   onDelete: (id: number) => void;
 }
 export const Note = ({ note, onDelete }: NoteProps) => {
+  const [title, setTitle] = useState(note.title);
+  const [text, setText] = useState(note.text);
+  const noteRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (noteRef.current && !noteRef.current.contains(event.target as Node)) {
+        if (title !== note.title || text !== note.text) {
+          updateNote({ id: note.id, title, text, color: note.color });
+        }
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [title, text, note.id, note.color, note.text, note.title]);
+
   return (
     <div>
       <div
+        ref={noteRef}
         key={note.id}
-        className="w-full h-64 flex flex-col justify-between bg-pink-200 dark:border-gray-700 rounded-lg border border-gray-400 mb-6 py-5 px-4"
+        className={`w-64 p-4 rounded-lg shadow-md ${note.color} flex flex-col gap-2`}
       >
-        <div className="flex flex-row justify-between text-gray-800">
-          <p className="text-gray-700 text-sm">{note.text}</p>
+        <div className="flex flex-row justify-between text-gray-800 gap-2">
+          <input
+            type="text"
+            className="w-full bg-transparent text-md font-bold focus:outline-none"
+            placeholder="Title..."
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
           <button
             onClick={() => onDelete(note.id)}
             className="w-8 h-8 cursor-pointer rounded-full bg-gray-700 text-white flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2  focus:ring-black"
@@ -44,31 +73,15 @@ export const Note = ({ note, onDelete }: NoteProps) => {
             </svg>
           </button>
         </div>
+        <textarea
+          className="w-full bg-transparent resize-none focus:outline-none"
+          placeholder="Write something..."
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        ></textarea>
         <div>
           <div className="flex items-center gap-2 justify-between text-gray-800 dark:text-gray-100">
-            <p className="text-sm text-gray-700">{note.date}</p>
-            <button
-              className="w-8 h-8 cursor-pointer rounded-full bg-gray-700 text-white flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2  focus:ring-black"
-              aria-label="edit note"
-              role="button"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="icon icon-tabler icon-tabler-pencil"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z"></path>
-                <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
-                <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
-              </svg>
-            </button>
+            <p className="text-sm text-gray-500">{note.date}</p>
           </div>
         </div>
       </div>

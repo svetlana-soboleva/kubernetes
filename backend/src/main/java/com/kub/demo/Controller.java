@@ -43,6 +43,12 @@ public class Controller {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/notes/{id}")
+    public ResponseEntity<ResponseNoteDto> updateNote( @RequestBody ResponseNoteDto updatedNote){
+        Note note = service.updateNote(updatedNote);
+        return ResponseEntity.ok(ResponseNoteDto.fromModel(note));
+    }
+
 }
 
 
